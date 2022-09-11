@@ -16,9 +16,16 @@ public class Main {
         vocabulary.put("SOUTH", "S");
         vocabulary.put("WEST", "W");
         vocabulary.put("EAST", "E");
+        vocabulary.put("NORTH-EAST", "NE");
+        vocabulary.put("SOUTH-EAST", "SE");
+        vocabulary.put("SOUTH-WEST", "SW");
+        vocabulary.put("NORTH-WEST", "NW");
+        vocabulary.put("DOWN", "D");
+        vocabulary.put("UP", "U");
 
 
-        int loc = 1;
+
+        int loc =1;
         while(true) {
             System.out.println(locations.get(loc).getDescription());
 
