@@ -9,8 +9,17 @@ public class Locations implements Map<Integer, Location> {
 
     public static void main(String[] args) throws IOException {
 
+        //write locations and exits as objects to file by stream of bytes
+        // we added to class Locations interface "Serializable" and int serialVersionUID
+
+        try (ObjectOutputStream locFile = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("locations.dat")))) {
+            for (Location location : locations.values()) {
+                locFile.writeObject(location);
+            }
+        }
+
         // write locations and exits to file by stream of bytes
-        try (DataOutputStream locFile = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("locations.dat")))) {
+ /*       try (DataOutputStream locFile = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("locations.dat")))) {
 
             for (Location location : locations.values()) {
 
@@ -32,6 +41,8 @@ public class Locations implements Map<Integer, Location> {
                 }
             }
         }
+*/
+
         // write locations and exits to file by stream of chars
 /*        try (BufferedWriter bwLoc = new BufferedWriter(new FileWriter("locations.txt"));
              BufferedWriter bwDir = new BufferedWriter(new FileWriter("directions.txt"))) {
@@ -49,8 +60,32 @@ public class Locations implements Map<Integer, Location> {
     }
 
     static {
-        // load locations and exits from file by stream of bytes
-        try (DataInputStream locFile = new DataInputStream(new BufferedInputStream(new FileInputStream("locations.dat")))) {
+        //read locations and exits as objects from file by stream of bytes
+        // we added to class Locations interface "Serializable" and int serialVersionUID
+        try (ObjectInputStream locFile = new ObjectInputStream(new BufferedInputStream(new FileInputStream("locations.dat")))) {
+            boolean eof = false;
+            while (!eof) {
+                try {
+                    Location location = (Location) locFile.readObject();
+
+                    System.out.println("Read location " + location.getLocationID() + " : " + location.getDescription());
+                    System.out.println("Find exits " + location.getExits().size() + " exits");
+
+                    locations.put(location.getLocationID(), location);
+                } catch (EOFException e) {
+                    eof = true;
+                }
+            }
+        } catch (InvalidClassException ice) {
+            System.out.println("Invalid Class Exception " + ice.getMessage());
+        } catch (IOException io) {
+            System.out.println("IO Exception " + io.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class Not Found Exception " + e.getMessage());
+        }
+
+        //read locations and exits from file by stream of bytes
+ /*       try (DataInputStream locFile = new DataInputStream(new BufferedInputStream(new FileInputStream("locations.dat")))) {
             boolean eof = false;
             while (!eof) {
                 try {
@@ -81,9 +116,9 @@ public class Locations implements Map<Integer, Location> {
         } catch (IOException e) {
             System.out.println("IO Exception " + e.getMessage());
         }
+*/
 
-
-        // load locations from file by stream of chars
+        // read locations from file by stream of chars
  /*       try (BufferedReader brLoc = new BufferedReader(new FileReader("locations_big.txt"))) {
             String input;
             while ((input = brLoc.readLine()) != null) {
@@ -100,7 +135,7 @@ public class Locations implements Map<Integer, Location> {
         }
 */
 
-        // load exits from file by stream of chars
+        // read exits from file by stream of chars
  /*       try (BufferedReader brDir = new BufferedReader(new FileReader("directions_big.txt"))) {
             String input;
 
