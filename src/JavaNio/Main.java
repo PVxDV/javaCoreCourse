@@ -97,38 +97,58 @@ public class Main {
             readBuffer.flip();
             System.out.println("int1 = " + readBuffer.getInt());
 
+            // Cory Files by channel and method .transferFrom() and .transferTo()
+
+            RandomAccessFile copyFile = new RandomAccessFile("dataCopy.dat", "rw");
+            FileChannel copyChannel = copyFile.getChannel();
+
+            channel.position(0); // don`t forget to change position after previous operation
+            // .transferFrom() use destination channel
+//            long numTransferred = copyChannel.transferFrom(channel, 0, channel.size());  // using relative value, whatever you pass is treated
+                                                                                           // as an index relative to the current position
+
+           //  .transferTo() use the source channel
+            long numTransferred = channel.transferTo(0, channel.size(), copyChannel);
+
+            System.out.println("Num transferred = " + numTransferred);
+
+            channel.close();
+            ra.close();
+            copyChannel.close();
+
+
             // write data in random order
-            byte[] outputString = "Hello, World!".getBytes();
-            long str1Pos = 0;
-            long newInt1Pos = outputString.length;
-            long newInt2Pos = newInt1Pos + Integer.BYTES;
-            byte[] outputString2 = "Nice to meet you".getBytes();
-            long str2Pos = newInt2Pos + Integer.BYTES;
-            long newInt3Pos = str2Pos + outputString2.length;
-
-            ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES);
-            intBuffer.putInt(245).flip();
-
-            binChannel.position(newInt1Pos);
-            binChannel.write(intBuffer);
-            intBuffer.flip();
-
-            intBuffer.putInt(-98756).flip();
-
-            binChannel.position(newInt2Pos);
-            binChannel.write(intBuffer);
-
-            intBuffer.flip();
-            intBuffer.putInt(1000).flip();
-
-            binChannel.position(newInt3Pos);
-            binChannel.write(intBuffer);
-
-            binChannel.position(str1Pos);
-            binChannel.write(ByteBuffer.wrap(outputString));
-
-            binChannel.position(str2Pos);
-            binChannel.write(ByteBuffer.wrap(outputString2));
+//            byte[] outputString = "Hello, World!".getBytes();
+//            long str1Pos = 0;
+//            long newInt1Pos = outputString.length;
+//            long newInt2Pos = newInt1Pos + Integer.BYTES;
+//            byte[] outputString2 = "Nice to meet you".getBytes();
+//            long str2Pos = newInt2Pos + Integer.BYTES;
+//            long newInt3Pos = str2Pos + outputString2.length;
+//
+//            ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES);
+//            intBuffer.putInt(245).flip();
+//
+//            binChannel.position(newInt1Pos);
+//            binChannel.write(intBuffer);
+//            intBuffer.flip();
+//
+//            intBuffer.putInt(-98756).flip();
+//
+//            binChannel.position(newInt2Pos);
+//            binChannel.write(intBuffer);
+//
+//            intBuffer.flip();
+//            intBuffer.putInt(1000).flip();
+//
+//            binChannel.position(newInt3Pos);
+//            binChannel.write(intBuffer);
+//
+//            binChannel.position(str1Pos);
+//            binChannel.write(ByteBuffer.wrap(outputString));
+//
+//            binChannel.position(str2Pos);
+//            binChannel.write(ByteBuffer.wrap(outputString2));
 
             //read and write data in few iterations
 //            byte[] outputBytes = "Hello World!".getBytes();
