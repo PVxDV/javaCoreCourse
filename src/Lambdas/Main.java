@@ -55,43 +55,46 @@ public class Main {
 
         //sort collection with lambda
 
+        /*
+        Collections.sort(employees, (Employee employee1, Employee employee2) ->
+                employee1.getName().compareTo(employee2.getName()));
+         */
+
+        // because objects in the same type, we can remove type og objects from first part of the lambda expression
+
+        Collections.sort(employees, (employee1, employee2) ->
+                employee1.getName().compareTo(employee2.getName()));
 
         for (Employee employee : employees) {
             System.out.println(employee.getName());
         }
 
+        //pass the anonymous class as a parameter
+
+        /*
+        String sillyString = doStringStuff(new UpperConcat()  {
+                                               @Override
+                                               public String upperAndConcat(String s1, String s2) {
+                                                   return s1.toUpperCase() + s2.toUpperCase();
+                                               }
+                                           },
+                employees.get(0).getName(), employees.get(1).getName());
+        System.out.println(sillyString);
+         */
+
+        // use lambda instead pass the anonymous class as a parameter
+        // when we use the lambda expression, we don`t need use return keyword because it`s assumed
+
+        UpperConcat uc = (s1, s2) -> s1.toUpperCase() + s2.toUpperCase();
+        String sillyString = doStringStuff(uc, employees.get(0).getName(), employees.get(1).getName());
+        System.out.println(sillyString);
+
+
+    }
+
+    public final static String doStringStuff(UpperConcat uc, String s1, String s2) {
+        return uc.upperAndConcat(s1, s2);
+
     }
 }
 
-class CodeToRun implements Runnable {
-    @Override
-    public void run() {
-        System.out.println("Printing from the Runnable");
-    }
-}
-
-class Employee {
-    private String name;
-    private int age;
-
-    public Employee(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-}
