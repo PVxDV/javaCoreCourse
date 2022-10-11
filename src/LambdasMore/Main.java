@@ -4,9 +4,7 @@ package LambdasMore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.IntPredicate;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -116,12 +114,93 @@ public class Main {
         System.out.println("\n==================");
 
         // we can use Supplier in this scenario. Because Supplier always return a value, we have to include return keyword
-        // we can`t pass suppliers th methods
+        // we can`t pass suppliers in the methods
         Supplier<Integer> randomSupplier = () -> random.nextInt(1000);
         for (int i = 0; i < 10; i++) {
             System.out.println(randomSupplier.get());
         }
 
+        System.out.println("\n==================");
+
+        // regular way to take a last name
+
+        /*
+        employees.forEach(employee -> {
+            String lastName = employee.getName().substring(employee.getName().indexOf(' ') + 1);
+            System.out.println("Last Name is: " + lastName);
+        });
+        */
+
+        // get lastName by Function. 1st parameter is obj that we past, 2nd parameter is type of return value
+        Function<Employee, String> getLastName = (Employee employee) -> {
+            return employee.getName().substring(employee.getName().indexOf(' ') + 1);
+        };
+
+        // we have to use .apply method to start the Function
+        // advantage of using Function -> we can pass code to the method that accepts and return a value
+        // in format of lambda expression and run that code without to create an interface and a class that impl the interface
+        String lastName = getLastName.apply(employees.get(2));
+        System.out.println(lastName);
+
+        // Function to get a first name
+        Function<Employee, String> getFirstName = (Employee employee) -> {
+            return employee.getName().substring(0, employee.getName().indexOf(' '));
+        };
+
+        System.out.println("\n==================");
+
+        String firstName = getFirstName.apply(employees.get(2));
+        System.out.println(firstName);
+
+        System.out.println("\n==================");
+
+        // we use method to print last or first names
+        Random random1 = new Random();
+        for(Employee employee : employees) {
+            if(random1.nextBoolean()) {
+                System.out.println(getAName(getFirstName, employee));
+            } else {
+                System.out.println(getAName(getLastName, employee));
+            }
+        }
+
+        System.out.println("\n==================");
+
+        // we can use chain Functions as a Predicate by method .andThen()
+        Function<Employee, String> upperCase = employee -> employee.getName().toUpperCase();
+        Function<String, String> firstNameFunction = name -> name.substring(0, name.indexOf(' '));
+        Function chainedFunction = upperCase.andThen(firstNameFunction);
+        System.out.println(chainedFunction.apply(employees.get(0)));
+
+        System.out.println("\n==================");
+
+        // if we need 2 argument if Function, we can use BI interface
+        // we can`t chain BI functions, but if BI function in the first position of the chain, it`s possible
+        BiFunction<String, Employee, String> concatAge = (String name, Employee employee) -> {
+            return name.concat(" " + employee.getAge());
+        };
+
+        String upperName = upperCase.apply(employees.get(0));
+        System.out.println(concatAge.apply(upperName, employees.get(0)));
+
+        System.out.println("\n==================");
+
+        // UnaryOperator accepts and return value of the same type
+        IntUnaryOperator intBy5 = i -> i + 5;
+        System.out.println(intBy5.applyAsInt(10));
+
+        System.out.println("\n==================");
+
+        // chained version for Consumer
+        Consumer<String> c1 = s -> s.toUpperCase();
+        Consumer<String> c2 = s -> System.out.println(s);
+        c1.andThen(c2).accept("Hello World!");
+
+
+    }
+
+    private static String getAName(Function<Employee, String> getName, Employee employee) {
+        return getName.apply(employee);
     }
 
     private static void printEmployeesByAge(List<Employee> employees,
