@@ -1,5 +1,8 @@
 package RegularExpressions;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Main {
     public static void main(String[] args) {
         String string = "I am a string. Yes, I am.";
@@ -131,39 +134,107 @@ public class Main {
         System.out.println(thirdAlphanumeric.replaceAll("^abcDe+", "YYY"));
         System.out.println(thirdAlphanumeric.replaceAll("^abcDe*", "YYY"));
         System.out.println(thirdAlphanumeric.replaceAll("^abcDe{2,5}", "YYY"));
+        System.out.println(thirdAlphanumeric.replaceAll("h+i*j", "YYY"));
 
+        System.out.println("======================\n");
 
+        // We use the regular expression h2 as a tag
+        StringBuilder htmlText = new StringBuilder("<h1>My Heading</h1>");
+        htmlText.append("<h2>Sub-heading</h2>");
+        htmlText.append("<p>This is paragraph about something.</p>");
+        htmlText.append("<p>This is another paragraph about something else.</p>");
+        htmlText.append("<h2>Summary</h2>");
+        htmlText.append("<p>Here is the summary.</p>");
 
+        //String h2Pattern = ".*<h2>.*";
+        String h2Pattern = "<h2>";
+        Pattern pattern = Pattern.compile(h2Pattern, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(htmlText);
+        System.out.println(matcher.matches());
 
+        matcher.reset();
+        int count =0;
+        while (matcher.find()) {
+            count++;
+            System.out.println("Occurrence " + count + ":" + matcher.start() + " to " + matcher.end()); // matcher.end return index (!)AFTER the match
+        }
 
+        System.out.println("======================\n");
 
+        String h2GroupPattern = "(<h2>.*?</h2>)"; // use group, keep in mind that parentheses aren`t part of the pattern
+        // when we work with a groups, we access them using the group method in the matcher class
+        // (<h2>.*</h2>) greed quantifier
+        // (<h2>.*?</h2>) lazy quantifier
+        Pattern groupPattern = Pattern.compile(h2GroupPattern);
+        Matcher groupMatcher = groupPattern.matcher(htmlText);
+        System.out.println(groupMatcher.matches());
+        groupMatcher.reset();
 
+        while(groupMatcher.find()) {
+            System.out.println("Occurrence: " + groupMatcher.group(1));
+        }
 
+        System.out.println("======================\n");
 
+        String h2TextGroups = "(<h2>)(.+?)(</h2p>)";
+        Pattern h2TextPattern = Pattern.compile(h2TextGroups);
+        Matcher h2TextMatcher = h2TextPattern.matcher(htmlText);
 
+        while(h2TextMatcher.find()) {
+            System.out.println("Occurrence: " + h2TextMatcher.group(2));
+        }
 
+        System.out.println("======================\n");
 
+        // "abc" means "a" and "b" and "c"
+        // [Hh]arry
+        System.out.println("harry".replaceAll("[Hh]arry", "Larry"));
+        System.out.println("harry".replaceAll("[H|h]arry", "Larry"));
+        System.out.println("Harry".replaceAll("[H|h]arry", "Larry"));
 
+        System.out.println("======================\n");
 
+        //[^abs] means all character except "a" and "b" and "c"
+        String tvTest = "tstvtkt";
+        //String tNotVRegExp = "t[^v]"; // will not wind third result "t" because after "t" must be following any character
+        String tNotVRegExp = "t(?!v)"; // t(?=v) positive regExp
+        Pattern tNotVPattern = Pattern.compile(tNotVRegExp);
+        Matcher tNotVMatcher = tNotVPattern.matcher(tvTest);
 
+        count = 0;
+        while (tNotVMatcher.find()) {
+            count++;
+            System.out.println("Occurrence: " + count + " : " + tNotVMatcher.start() + " to " + tNotVMatcher.end());
+        }
 
+        System.out.println("======================\n");
+        // ^([\(]{1}[0-9]{3}[\)]{1}[ ]{1}[0-9]{3}[\-]{1}[0-9]{4})$ simple US phone number (800) 123-4567
+        String phone1 = "1234567890"; // shouldn`t match
+        String phone2 = "(123) 456-7890"; //match
+        String phone3 = "123 456-7890"; //shouldn`t match
+        String phone4 = "(123)456-7890"; //should`t match
 
+        System.out.println("phone1 = " + phone1.matches("^([\\(]{1}[0-9]{3}[\\)]{1}[ ]{1}[0-9]{3}[\\-]{1}[0-9]{4})$"));
+        System.out.println("phone2 = " + phone2.matches("^([\\(]{1}[0-9]{3}[\\)]{1}[ ]{1}[0-9]{3}[\\-]{1}[0-9]{4})$"));
+        System.out.println("phone3 = " + phone3.matches("^([\\(]{1}[0-9]{3}[\\)]{1}[ ]{1}[0-9]{3}[\\-]{1}[0-9]{4})$"));
+        System.out.println("phone4 = " + phone4.matches("^([\\(]{1}[0-9]{3}[\\)]{1}[ ]{1}[0-9]{3}[\\-]{1}[0-9]{4})$"));
 
+        System.out.println("======================\n");
+        // ^4[0-9]{12}([0-9]{3})?$ validate VISA card
 
+        String visa1 = "444444444444444"; // shouldn`t match
+        String visa2 = "544444444444444"; // shouldn`t match
+        String visa3 = "444444444444444444"; // shouldn`t match
+        String visa4 = "44444"; // shouldn`t match
+        String visa5 = "4444444444444"; // match
+        String visa6 = "4444444444444444"; // match
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        System.out.println("visa1 = " + visa1.matches("^4[0-9]{12}([0-9]{3})?$"));
+        System.out.println("visa2 = " + visa2.matches("^4[0-9]{12}([0-9]{3})?$"));
+        System.out.println("visa3 = " + visa3.matches("^4[0-9]{12}([0-9]{3})?$"));
+        System.out.println("visa4 = " + visa4.matches("^4[0-9]{12}([0-9]{3})?$"));
+        System.out.println("visa5 = " + visa5.matches("^4[0-9]{12}([0-9]{3})?$"));
+        System.out.println("visa6 = " + visa6.matches("^4[0-9]{12}([0-9]{3})?$"));
 
 
     }
