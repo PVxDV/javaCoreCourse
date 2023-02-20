@@ -1,7 +1,6 @@
 package Paths;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -12,12 +11,11 @@ public class Main {
     public static void main(String[] args) {
         Path path = FileSystems.getDefault().getPath("WorkingDirectoryFile.txt"); // get path to file in src folder
         printFile(path);
-
         System.out.println("----------------------------------------------------------");
 
 //      Path filePath = FileSystems.getDefault().getPath("fromPaths","SubdirectoryFile.txt"); // get path to file in project folder and subdirectory
         Path filePath = Paths.get(".","fromPaths","SubdirectoryFile.txt"); // get path to file in project folder and subdirectory with Paths.get()
-        printFile(filePath);
+        printFile(filePath);;
 
         System.out.println("----------------------------------------------------------");
 
